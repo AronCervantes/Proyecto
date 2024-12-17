@@ -1,0 +1,59 @@
+CREATE TABLE usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_usuario VARCHAR(100) UNIQUE,
+  password_hash VARCHAR(250),
+  tipo_usuario VARCHAR(50),
+  id_tu VARCHAR(50)
+  FOREIGN KEY (id_tu) REFERENCES codigos_acceso(tipo_usuario)
+);
+
+CREATE TABLE codigos_acceso (
+  tipo_usuario VARCHAR(50),
+  codigo VARCHAR(50) PRIMARY KEY
+);
+
+CREATE TABLE pacientes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_paciente VARCHAR(100),
+  apellido VARCHAR(100),
+  edad INT,
+  peso DECIMAL(10,2),
+  altura DECIMAL(10,2),
+  frecuencia_cardiaca INT,
+  id_ma INT,
+  FOREIGN KEY (id_ma) REFERENCES medicos(id)
+);
+
+CREATE TABLE medicos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_medico VARCHAR(100),
+  especialidad VARCHAR(250),
+  id_hospital INT,
+  FOREIGN KEY (id_hospital) REFERENCES hospital(id)
+);
+
+CREATE TABLE hospital (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_hospital VARCHAR(100),
+  ubicacion VARCHAR(250)
+);
+
+CREATE TABLE equipos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_equipo VARCHAR(100),
+  estado VARCHAR(100),
+  descripcion VARCHAR(100),
+  ultimo_mantenimiento VARCHAR(100),
+  id_ma INT,
+  id_hospital INT,
+  FOREIGN KEY (id_ma) REFERENCES medicos(id),
+  FOREIGN KEY (id_hospital) REFERENCES hospital(id)
+);
+
+CREATE VIEW vista_pacientes_medicos AS SELECT  pacientes.nombre_paciente, pacientes.apellido, pacientes.edad, pacientes.frecuencia_cardiaca, pacientes.altura, pacientes.peso, medicos.nombre_medico AS nombre_medico FROM pacientes JOIN medicos pacientes.id_ma = medicos.id; 
+
+CREATE VIEW vista_equipos_hospitales AS SELECT  equipos.id, equipos.nombre_equipo, equipos.estado, equipos.descripcion, equipos.ultimo_mantenimiento, hospital.nombre_hospital hospital.ubicación AS ubicacion FROM equipos JOIN hospital ON equipos.id_hospital = hospital.id;
+
+CREATE VIEW vista_equipos_medicos AS SELECT  equipos.id, equipos.nombre_equipo, equipos.estado, equipos.descripcion, equipos.ultimo_mantenimiento, medicos.nombre_medico, AS nombre_medico FROM equipos JOIN medicos ON equipos.id_ma = medicos.id;
+
+CREATE VIEW vista_medicos_hospitales AS SELECT medicos.id, medicos.nombre_medico, medicos.especialidad, hospital.nombre_hospital AS nombre_hospital FROM medicos JOIN hospital ON medicos.id_hospital = hospital.id;
