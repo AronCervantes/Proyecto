@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar registros</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="navbar"></div>
+    <h1>Gestionar registros</h1>
+    <br>
+
+    <form id="update-form">
+        <label for="tabla">Tipo de registro a modificar</label>
+        <select id="tabla" name="tabla">
+            <option value="usuarios">Seleccionar opción</option>
+            <option value="usuarios">Usuario</option>
+            <option value="medicos">Médico</option>
+            <option value="equipos">Equipo</option>
+            <option value="pacientes">Paciente</option>
+        </select>
+    </form>
+    <br>
+    <div id="secciones">
+        <div class="seccion" data-tabla="usuarios" style="display: none;">
+            <p>Editar Usuarios</p><br>
+            <form action="/gestionar" method="POST">
+                <input type="hidden" id="tabla" name="tabla" value="usuarios">
+                <label for="id">Id del usuario:</label>
+                <input type="number" id="id" name="id">
+                
+                <label for="columna">Tipo de dato a ingresar:</label>
+                <select id="columna" name="columna">
+                    <option value="nombre_usuario">Seleccionar opción</option>
+                    <option value="nombre_usuario">Nombre del usuario</option>
+                    <option value="tipo_usuario">Tipo de usuario</option>
+                </select>
+                
+                <label for="nvalor">Dato nuevo:</label>
+                <input type="text" id="nvalor" name="nvalor">
+                
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+
+        <div class="seccion" data-tabla="medicos" style="display: none;">
+            <p>Editar Médicos</p><br>
+            <form action="/gestionar" method="POST">
+                <input type="hidden" id="tabla" name="tabla" value="medicos">
+                <label for="id">Id del médico:</label>
+                <input type="number" id="id" name="id">
+                
+                <label for="columna">Tipo de dato a ingresar:</label>
+                <select id="columna" name="columna">
+                    <option value="nombre_medico">Seleccionar opción</option>
+                    <option value="nombre_medico">Nombre del médico</option>
+                    <option value="especialidad">Especialidad</option>
+                    <option value="id_hospital">Número del hospital</option>
+                </select>
+                
+                <label for="nvalor">Dato nuevo:</label>
+                <input type="text" id="nvalor" name="nvalor">
+                
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+        <div class="seccion" data-tabla="equipos" style="display: none;">
+            <p>Editar Equipos</p><br>
+            <input type="hidden" id="tabla" name="tabla" value="equipos">
+            <form action="/gestionar" method="POST">
+                <label for="id">Id del equipo:</label>
+                <input type="number" id="id" name="id">
+                
+                <label for="columna">Tipo de dato a ingresar:</label>
+                <select id="columna" name="columna">
+                    <option value="nombre_equipo">Seleccionar opción</option>
+                    <option value="nombre_equipo">Nombre del equipo</option>
+                    <option value="estado">Estado del equipo</option>
+                    <option value="descripcion">Descripción del equipo</option>
+                    <option value="ultimo_mantenimiento">Último mantenimiento</option>
+                    <option value="nombre_equipo">Nombre del equipo</option>
+                    <option value="id_ma">Número del médico asignado al equipo</option>
+                    <option value="id_hospital">Número del hospital asignado al equipo</option>
+                </select>
+                
+                <label for="nvalor">Dato nuevo:</label>
+                <input type="text" id="nvalor" name="nvalor">
+                
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+        <div class="seccion" data-tabla="pacientes" style="display: none;">
+            <p>Editar Paciente</p><br>
+            <form action="/gestionar" method="POST">
+                <input type="hidden" id="tabla" name="tabla" value="pacientes">
+                <label for="id">Id del paciente:</label>
+                <input type="number" id="id" name="id">
+                
+                <label for="columna">Tipo de dato a ingresar:</label>
+                <select id="columna" name="columna">
+                    <option value="nombre_paciente">Seleccionar opción</option>
+                    <option value="nombre_paciente">Nombre del paciente</option>
+                    <option value="apellido">Apellido del paciente</option>
+                    <option value="edad">Edad</option>
+                    <option value="peso">Peso (kg)</option>
+                    <option value="altura">Altura (m)</option>
+                    <option value="id_ma">Número del médico asignado al paciente</option>
+                </select>
+                
+                <label for="nvalor">Dato nuevo:</label>
+                <input type="text" id="nvalor" name="nvalor">
+                
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <br>
+    <h2>Eliminar registros</h2>
+    <p>¡Al eliminar un registro no podrá ser restaurado!</p>
+    <form action="/eliminar-registros" method="POST">
+        <label for="registro">Tipo de registro:</label>
+        <select id="registro" name="registro">
+            <option value="usuarios">Usuario</option>
+            <option value="medicos">Médico</option>
+            <option value="equipos">Equipo</option>
+            <option value="pacientes">Paciente</option>
+        </select>
+
+        <label for="id">Id del registro:</label>
+        <input type="number" id="id" name="id">
+        <button type="submit">ELIMINAR</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tablaSelect = document.getElementById('tabla');
+            const secciones = document.querySelectorAll('.seccion');
+
+            tablaSelect.addEventListener('change', () => {
+                const tablaSeleccionada = tablaSelect.value;
+
+                secciones.forEach(seccion => {
+                    seccion.style.display = 'none';
+                });
+
+                const seccionSeleccionada = document.querySelector(`.seccion[data-tabla="${tablaSeleccionada}"]`);
+                if (seccionSeleccionada) {
+                    seccionSeleccionada.style.display = 'block';
+                }
+            });
+        });
+    </script>
+    <script>
+        fetch('/tipo-usuario')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Error al obtener el tipo de usuario');
+            }
+            return response.json();
+          })
+          .then(data => {
+            const Tipo_usuario = data.tipo_usuario;
+
+            return fetch('navbar.html')
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Error al cargar el navbar');
+                }
+                return response.text();
+              })
+              .then(data => {
+                document.getElementById('navbar').innerHTML = data;
+
+                const navItems = document.querySelectorAll('[data-role]');
+                navItems.forEach(item => {
+                  const roles = item.getAttribute('data-role').split(' '); 
+                  if (!roles.includes(Tipo_usuario)) {
+                    item.style.display = 'none';
+                  }
+                });
+              });
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+    </script>
+</body>
+</html>
