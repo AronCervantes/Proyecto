@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pacientes</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <h1>Cargar equipos desde Excel</h1>
+    <form action="/upload-e-x" method="POST" enctype="multipart/form-data">
+        <input type="file" name="excelFile" accept=".xlsx" />
+        <button type="submit">Subir Archivo</button>
+    </form>
+
+    <button onclick="window.location.href='/download-e-x'">Descargar equipos</button>
+    <button onclick="window.location.href='/equipos-pdf'">Cargar equipos desde pdf</button>
+    
+    <script>
+        document.addEventListener('keydown', function (event) {
+          if (event.ctrlKey && event.key === 's') {
+            event.preventDefault();
+            
+            const currentPage = window.location.pathname;
+    
+            if (currentPage.includes('equipos-x')) {
+              window.location.href = '/download-e-x';
+            } else {
+              alert('No hay descargas configuradas para esta página.');
+            }
+          }
+        });
+    </script>
+    <script>
+        fetch('/tipo-usuario')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Error al obtener el tipo de usuario');
+            }
+            return response.json();
+          })
+          .then(data => {
+            const Tipo_usuario = data.tipo_usuario;
+
+            return fetch('navbar.html')
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Error al cargar el navbar');
+                }
+                return response.text();
+              })
+              .then(data => {
+                document.getElementById('navbar').innerHTML = data;
+
+                const navItems = document.querySelectorAll('[data-role]');
+                navItems.forEach(item => {
+                  const roles = item.getAttribute('data-role').split(' '); 
+                  if (!roles.includes(Tipo_usuario)) {
+                    item.style.display = 'none';
+                  }
+                });
+              });
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+    </script>
+</body>
+</html>
