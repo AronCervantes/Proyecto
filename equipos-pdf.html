@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargar en pdf</title>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <h1>Cargar equipos desde un pdf</h1>
+    <form action="/upload-e-pdf" method="POST" enctype="multipart/form-data">
+        <input type="file" name="pdfFile" accept=".pdf" />
+        <button type="submit">Subir Archivo</button>
+    </form>
+
+    <button onclick="window.location.href='/download-e-pdf'">Descargar equipos en pdf</button>
+    <button onclick="window.location.href='/equipos-x'">Cargar equipos desde excel</button>
+    
+    <script>
+        document.addEventListener('keydown', function (event) {
+          if (event.ctrlKey && event.key === 's') {
+            event.preventDefault();
+            
+            const currentPage = window.location.pathname;
+    
+            if (currentPage.includes('equipos-pdf')) {
+              window.location.href = '/download-e-pdf';
+            } else {
+              alert('No hay descargas configuradas para esta página.');
+            }
+          }
+        });
+    </script>
+    <script>
+        fetch('/tipo-usuario')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Error al obtener el tipo de usuario');
+            }
+            return response.json();
+          })
+          .then(data => {
+            const Tipo_usuario = data.tipo_usuario;
+
+            return fetch('navbar.html')
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Error al cargar el navbar');
+                }
+                return response.text();
+              })
+              .then(data => {
+                document.getElementById('navbar').innerHTML = data;
+
+                const navItems = document.querySelectorAll('[data-role]');
+                navItems.forEach(item => {
+                  const roles = item.getAttribute('data-role').split(' '); 
+                  if (!roles.includes(Tipo_usuario)) {
+                    item.style.display = 'none';
+                  }
+                });
+              });
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+    </script>
+</body>
+</html>
