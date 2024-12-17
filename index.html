@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="navbar"></div>
+
+        <h1>Inicio</h1>
+        <p>Bienvenido a la página de gestión biomédica </p>
+        <br>
+        <h2>Ingresar datos de un paciente</h2>
+        <form action="/submit-data" method="POST">
+            <label for="name">Nombre del paciente:</label>
+            <input type="text" id="name" name="name" required>
+        
+            <label for="sname">Apellido del paciente:</label>
+            <input type="text" id="sname" name="sname" required>
+        
+            <label for="age">Edad:</label>
+            <input type="number" id="age" name="age" required>
+        
+            <label for="heart-rate">Frecuencia Cardiaca (bpm):</label>
+            <input type="number" id="heart-rate" name="heart_rate" required>
+        
+            <label for="height">Altura (m):</label>
+            <input type="number" id="height" name="height" step="0.01" required>
+        
+            <label for="weight">Peso (kg):</label>
+            <input type="number" id="weight" name="weight" step="0.1" required>
+        
+            <label for="id_ma">Médico asignado:</label>
+            <input type="number" id="id_ma" name="id_ma" required>
+        
+            <button type="submit">Guardar</button>
+        </form>
+        
+    <script>
+        fetch('/tipo-usuario')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Error al obtener el tipo de usuario');
+            }
+            return response.json();
+          })
+          .then(data => {
+            const Tipo_usuario = data.tipo_usuario;
+
+            return fetch('navbar.html')
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Error al cargar el navbar');
+                }
+                return response.text();
+              })
+              .then(data => {
+                document.getElementById('navbar').innerHTML = data;
+
+                const navItems = document.querySelectorAll('[data-role]');
+                navItems.forEach(item => {
+                  const roles = item.getAttribute('data-role').split(' '); 
+                  if (!roles.includes(Tipo_usuario)) {
+                    item.style.display = 'none';
+                  }
+                });
+              });
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+    </script>
+</body>
+</html>
