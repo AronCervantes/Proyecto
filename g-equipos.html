@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar equipos</title>
+</head>
+<body>
+    <div id="navbar"></div>
+        <br>
+        <h2>Ingresar datos del equipo</h2>
+        <form action="/insertar-equipo" method="POST">
+            <label for="equipo_name">Nombre:</label>
+            <input type="text" id="equipo_name" name="equipo_name" required>
+
+            <label for="estado">Estado del equipo:</label>
+            <select id="estado" name="estado" required>
+                <option value="Nuevo">Seleccionar opción</option>
+                <option value="Nuevo">Nuevo</option>
+                <option value="Seminuevi">Semiuevo</option>
+                <option value="Usado">Usado</option>
+                <option value="Viejo">viejo</option>
+                <option value="Obsoleto">obsoleto</option>
+            </select>
+
+            <label for="descripcion">Descripcion del equipo:</label>
+            <input type="text" id="descripcion" name="descripcion" required>
+
+            <label for="u_m">Último mantenimiento</label>
+            <input type="date" id="u_m" name="u_m" required>
+
+            <label for="id_M">id del médico: </label>
+            <input type="text" id="id_M" name="id_M" required>
+
+            <label for="id_hospital">id del hospital: </label>
+            <input type="text" id="id_hospital" name="id_hospital" required>
+            <button type="submit">Guardar</button>
+        </form>
+
+        <h2>Modificar datos de un equipo</h2>
+        <form action="/gestionar" method="POST">
+            <label for="id">Id del equipo:</label>
+            <input type="number" id="id" name="id">
+            
+            <label for="columna">Tipo de dato a ingresar:</label>
+            <select id="columna" name="columna">
+                <option value="nombre_equipo">Seleccionar opción</option>
+                <option value="nombre_equipo">Nombre del equipo</option>
+                <option value="estado">Estado del equipo</option>
+                <option value="descripcion">Descripcion del equipo</option>
+                <option value="ultimo_mantenimiento">Ultimo mantenimiento</option>
+                <option value="nombre_equipo">Nombre del equipo</option>
+                <option value="id_ma">Número del médico asignado al equipo</option>
+                <option value="id_hospital">Número del hospital asignado al equipo</option>
+            </select>
+            
+            <label for="nvalor">Dato nuevo:</label>
+            <input type="text" id="nvalor" name="nvalor">
+            
+            <button type="submit">Guardar</button>
+        </form>
+
+    <script>
+        fetch('/tipo-usuario')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Error al obtener el tipo de usuario');
+            }
+            return response.json();
+          })
+          .then(data => {
+            const Tipo_usuario = data.tipo_usuario;
+
+            return fetch('navbar.html')
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Error al cargar el navbar');
+                }
+                return response.text();
+              })
+              .then(data => {
+                document.getElementById('navbar').innerHTML = data;
+
+                const navItems = document.querySelectorAll('[data-role]');
+                navItems.forEach(item => {
+                  const roles = item.getAttribute('data-role').split(' '); 
+                  if (!roles.includes(Tipo_usuario)) {
+                    item.style.display = 'none';
+                  }
+                });
+              });
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+    </script>
+</body>
+</html>
